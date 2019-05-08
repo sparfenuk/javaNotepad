@@ -1,4 +1,6 @@
 package controllers;
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -18,6 +20,25 @@ public class MainController {
     @FXML
     private Button saveBtn;
 
+    @FXML
+    private TextField numberField;
+
+    @FXML
+    private Button fibonacciBtn;
+
+    @FXML
+    void onFibonacciClick(ActionEvent event) {
+
+    }
+
+    @FXML
+    void onLoadClick(ActionEvent event) {
+
+    }
+
+    @FXML
+    void onSaveClick(ActionEvent event) {
+
+    }
+
 }
-
-
