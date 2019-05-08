@@ -22,5 +22,10 @@ public class Program extends Application {
 
 
         Application.launch();
+
+//        SearchX searchX = new SearchX(200);
+//        searchX.run();
+//        while (!searchX.isEnded){}
+//        System.out.println(searchX.fibonachi.get(100));
     }
 }
