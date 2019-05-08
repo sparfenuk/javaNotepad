@@ -1,3 +1,5 @@
+package models;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,5 +39,12 @@ public class SearchX implements Runnable {
         }
         isEnded = true;
 
+    }
+
+    public void saveNums(String path){
+        String toSave = "";
+        for (BigInteger b:fibonachi) {
+            
+        }
     }
 }

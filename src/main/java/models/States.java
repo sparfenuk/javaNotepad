@@ -1,4 +1,4 @@
-package controllers;
+package models;
 
 public final class States {
     public static final String READY = "READY";

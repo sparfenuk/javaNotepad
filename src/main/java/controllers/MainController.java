@@ -6,6 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import models.SearchX;
+import models.States;
 
 import javax.swing.*;
 import java.io.FileReader;
@@ -41,21 +43,35 @@ public class MainController {
         state = States.READY;
     }
 
-    private void saveFile()
+    private void saveFile(String string)
     {
 
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 try {
-                    progressBar.setProgress(0);
-                    FileWriter fileWriter = new FileWriter(path.getText(),false);
 
-                    fileWriter.write(rtBox.getText());
+                    while(state!=States.READY);
 
-                    fileWriter.close();
-                    progressBar.setProgress(100);
-                } catch (IOException e) {
+                    state = States.SAVING;
+
+                    FileWriter nFile = new FileWriter(path.getText());
+                    char[] arr = string.toCharArray();
+
+                    for(int i =0;i<arr.length;i++)
+                    {
+                        Thread.sleep(450);
+                        double prog = (double)(i+1)/(double)arr.length;
+                        progressBar.setProgress(prog);
+                        nFile.write((int)arr[i]);
+                    }
+                    nFile.flush();
+                    nFile.close();
+
+                    state = States.READY;
+
+                } catch (Exception e) {
+                    state = States.READY;
                     JOptionPane.showMessageDialog(null,"Path not valid");
                 }
             }
@@ -70,28 +86,34 @@ public class MainController {
 
     @FXML
     void onFibonacciClick(ActionEvent event) {
-
+        //SearchX searchX = new SearchX()
     }
 
-    @FXML
-    void onLoadClick(ActionEvent event) {
-
+    public void onLoadClick(ActionEvent actionEvent) {
+        final String Path = path.getText();
         Runnable runnable = new Runnable() {
 
             public void run() {
                 try {
-                    FileReader fileReader = new FileReader( path.getText());
+
+                    while(state!=States.READY);
+
+                    state = States.LOADING;
+                    FileReader fileReader = new FileReader(Path);
 
                     int data = fileReader.read();
                     while(data != -1) {
+
                         rtBox.setText(rtBox.getText() + (char)data);
 
                         data = fileReader.read();
                     }
                     fileReader.close();
 
+                    state = States.READY;
 
                 } catch (Exception e) {
+                    state = States.READY;
                     e.printStackTrace();
                 }
             }
@@ -103,7 +125,7 @@ public class MainController {
 
     @FXML
     void onSaveClick(ActionEvent event) {
-        saveFile();
+        saveFile(rtBox.getText());
     }
 
 }
