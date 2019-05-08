@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
+<?import javafx.scene.control.Label?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
     <children>
         <TextField fx:id="path" layoutX="15.0" layoutY="14.0" prefHeight="22.0" prefWidth="566.0" />
@@ -15,5 +16,7 @@
         <TextField fx:id="numberField" layoutX="15.0" layoutY="365" prefHeight="22.0" prefWidth="150" />
         <Button fx:id="fibonacciBtn" layoutX="175.0" layoutY="365" mnemonicParsing="false" onAction="#onFibonacciClick" text="Find Fibonacci" />
         <ProgressBar fx:id="progressBar" layoutY="580" prefWidth="750.0" progress="0.0" />
+        <Label fx:id="statusLabel" layoutX="15" layoutY="550" text="Status: READY"/>
+        <Label fx:id="progressLabel" layoutX="710" layoutY="550" text="0%"/>
     </children>
 </AnchorPane>

@@ -2,10 +2,7 @@ package controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import models.SearchX;
 import models.States;
 
@@ -39,6 +36,12 @@ public class MainController {
     @FXML
     private ProgressBar progressBar;
 
+    @FXML
+    private Label statusLabel;
+
+    @FXML
+    private Label progressLabel;
+
     public MainController() {
         state = States.READY;
     }
@@ -53,7 +56,7 @@ public class MainController {
 
                     while(state!=States.READY);
 
-                    state = States.SAVING;
+                    setStatus(States.SAVING);
 
                     FileWriter nFile = new FileWriter(path.getText());
                     char[] arr = string.toCharArray();
@@ -61,17 +64,17 @@ public class MainController {
                     for(int i =0;i<arr.length;i++)
                     {
                         Thread.sleep(450);
-                        double prog = (double)(i+1)/(double)arr.length;
-                        progressBar.setProgress(prog);
+                        setProgress((double)(i+1),(double)arr.length);
+
                         nFile.write((int)arr[i]);
                     }
                     nFile.flush();
                     nFile.close();
 
-                    state = States.READY;
+                    setStatus(States.READY);
 
                 } catch (Exception e) {
-                    state = States.READY;
+                    setStatus(States.READY);
                     JOptionPane.showMessageDialog(null,"Path not valid");
                 }
             }
@@ -98,7 +101,7 @@ public class MainController {
 
                     while(state!=States.READY);
 
-                    state = States.LOADING;
+                    setStatus(States.LOADING);
                     FileReader fileReader = new FileReader(Path);
 
                     int data = fileReader.read();
@@ -110,10 +113,10 @@ public class MainController {
                     }
                     fileReader.close();
 
-                    state = States.READY;
+                    setStatus(States.READY);
 
                 } catch (Exception e) {
-                    state = States.READY;
+                    setStatus(States.READY);
                     e.printStackTrace();
                 }
             }
@@ -126,6 +129,18 @@ public class MainController {
     @FXML
     void onSaveClick(ActionEvent event) {
         saveFile(rtBox.getText());
+    }
+
+
+    void setStatus(String status)
+    {
+        state = status;
+        statusLabel.setText("Status: "+state);
+    }
+    void setProgress(Double curPosition,Double maxPosition)
+    {
+        progressBar.setProgress(curPosition/maxPosition);
+        progressLabel.setText(Math.round((curPosition/maxPosition) * 100)+"%");
     }
 
 }
