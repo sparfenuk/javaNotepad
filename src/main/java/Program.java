@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
+
 public class Program extends Application {
 
     @Override
@@ -19,13 +20,7 @@ public class Program extends Application {
     }
 
     public static void main(String[] args) {
-
-
         Application.launch();
 
-//        SearchX searchX = new SearchX(200);
-//        searchX.run();
-//        while (!searchX.isEnded){}
-//        System.out.println(searchX.fibonachi.get(100));
     }
 }
