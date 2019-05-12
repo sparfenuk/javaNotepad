@@ -1,15 +1,14 @@
 package controllers;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import models.States;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -32,8 +31,11 @@ public class MainController {
     @FXML
     private TextField path;
 
-//    @FXML
-//    private TextArea rtBox;
+    @FXML
+    private Text statusLabel;
+
+    @FXML
+    private Text progressLabel;
 
     @FXML
     private Button loadBtn;
@@ -50,7 +52,9 @@ public class MainController {
     @FXML
     private ProgressBar progressBar;
 
-    private StyleClassedTextArea rtBox;
+    private CodeArea rtBox;
+
+    private String rtText;
 
     @FXML
     public void initialize(){
@@ -66,7 +70,7 @@ public class MainController {
 
 
 
-        rtBox  = new StyleClassedTextArea ();
+        rtBox  = new CodeArea();
         rtBox.setParagraphGraphicFactory(LineNumberFactory.get(rtBox));
         rtBox.setLayoutX(14.0);
         rtBox.setLayoutY(47.0);
@@ -91,7 +95,7 @@ public class MainController {
 
                     while(!state.equals(States.READY));
 
-                    state = States.SAVING;
+                    setStatus(States.SAVING);
 
                     FileWriter nFile = new FileWriter(path.getText());
                     char[] arr = string.toCharArray();
@@ -99,17 +103,16 @@ public class MainController {
                     for(int i =0;i<arr.length;i++)
                     {
                         //Thread.sleep(450);
-
-                        progressBar.setProgress((double)(i+1)/(double)arr.length);
+                        setProgress((double)(i+1),(double)arr.length);
                         nFile.write((int)arr[i]);
                     }
                     nFile.flush();
                     nFile.close();
 
-                    state = States.READY;
+                    setStatus(States.READY);
 
                 } catch (Exception e) {
-                    state = States.READY;
+                    setStatus(States.READY);
                     JOptionPane.showMessageDialog(null,"Path not valid");
                 }
             }
@@ -117,8 +120,6 @@ public class MainController {
 
         Thread thread = new Thread(runnable);
         thread.start();
-
-
     }
 
 
@@ -131,9 +132,9 @@ public class MainController {
                 try {
                     while(!state.equals(States.READY));
 
-                    state = States.SEARCHINGX;
+                    setStatus(States.SEARCHINGX);
 
-                    BigInteger maxNumber = new BigInteger(numberField.getText());
+                    BigInteger maxNumber = new BigInteger(numberField.getText()).subtract(BigInteger.ONE);
                     BigInteger previousNumber = BigInteger.ZERO;
                     BigInteger nextNumber = BigInteger.ONE;
 
@@ -149,18 +150,18 @@ public class MainController {
                         nextNumber = sum;
                         text += sum.toString() + "\n";
 
-                        progressBar.setProgress((i.add(BigInteger.ONE).doubleValue())/maxNumber.doubleValue());
+                       setProgress((i.add(BigInteger.ONE).doubleValue()),maxNumber.doubleValue());
                     }
 
 
-                    state = States.READY;
+                    setStatus(States.READY);
 
                     saveFile(text);
 
 
 
                 } catch (Exception e) {
-                    state = States.READY;
+                    setStatus(States.READY);
                     e.printStackTrace();
                 }
 
@@ -170,17 +171,22 @@ public class MainController {
         thread.start();
     }
 
+
+
     public void onLoadClick(ActionEvent actionEvent) {
 
+
+
+
         Runnable runnable = new Runnable() {
+
 
             public void run() {
                 try {
 
-
                     while(!state.equals(States.READY));
 
-                    state = States.LOADING;
+                    setStatus(States.LOADING);
 
                     File toLoad =new File(path.getText());
                     //rtBox.replaceText("");
@@ -196,10 +202,9 @@ public class MainController {
                     StringBuilder sb = new StringBuilder();
                     for(BigInteger i = BigInteger.ONE; data != -1 ; data = fileReader.read() , j++) {
 
-
                         sb.append((char)data);
 
-                        progressBar.setProgress((i.add(BigInteger.ONE).doubleValue())/dataLength);
+                        setProgress(((i.add(BigInteger.ONE).doubleValue())),dataLength);
 
                         if(j >= 1000){
                             j=0;
@@ -207,15 +212,19 @@ public class MainController {
                         }
 
                     }
-                    rtBox.replaceText(sb.toString());
 
+
+                    //rtText = sb.toString();
+                    Platform.runLater(()->rtBox.replaceText(sb.toString()));
+//                    rtText = sb.toString();
 
                     fileReader.close();
 
-                    state = States.READY;
+
+                    setStatus(States.READY);
 
                 } catch (Exception e) {
-                    state = States.READY;
+                    setStatus(States.READY);
                     e.printStackTrace();
                 }
             }
@@ -227,7 +236,24 @@ public class MainController {
 
     @FXML
     void onSaveClick(ActionEvent event) {
+        rtBox.clear();
         saveFile(rtBox.getText());
+    }
+
+
+    void setStatus(String status)
+    {
+        Platform.runLater(()->{
+            state = status;
+            statusLabel.setText("Status: "+state);
+        });
+    }
+    void setProgress(Double curPosition,Double maxPosition)
+    {
+        Platform.runLater(()-> {
+            progressBar.setProgress(curPosition / maxPosition);
+            progressLabel.setText(Math.round((curPosition / maxPosition) * 100) + "%");
+        });
     }
 
 }
